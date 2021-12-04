@@ -16,7 +16,7 @@ jobs:
       packages: read
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/codeformuenster/muenster-vectortiles/typebrook-mapstew:a818597.2
+      image: ghcr.io/codeformuenster/muenster-vectortiles:typebrook-mapstew-a818597.2
     steps:
       - uses: actions/checkout@v2
         with:
