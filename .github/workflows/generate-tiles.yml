@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '20 * * * *'
   push:
-    tags: 
+    tags:
       - update.*
 
 jobs:
@@ -28,17 +28,17 @@ jobs:
           REPO: ${{ github.repository }}
           TOKEN_DOWNLOAD_ARTIFACT: ${{ secrets.TOKEN_DOWNLOAD_ARTIFACT }}
         run: scripts/get-pbf-file.sh
-      
+
       - name: Generate Tiles
         run: >
           tilemaker --input ${{ env.TARGET }} --output tiles/
           --config  ${{ env.TILEMAKER_CONFIG }}
           --process ${{ env.TILEMAKER_PROCESS }};
-          osmconvert ${{ env.TARGET }} --out-timestamp | 
+          osmconvert ${{ env.TARGET }} --out-timestamp |
           TZ=${{ env.TZ }} xargs date --iso-8601=minutes -d >tiles/timestamp
-      
+
       - name: Apply config about deployment
-        run: > 
+        run: >
           jq '.tiles = ["<URL_PREFIX>/tiles/{z}/{x}/{y}.pbf"]' tiles/metadata.json >tiles/metadata.json.bak
           && mv tiles/metadata.json.bak tiles/metadata.json;
           ls *.html tiles/metadata.json styles/* | xargs sed -i "s#<URL_PREFIX>#${{ env.URL_PREFIX }}#g"
@@ -46,8 +46,8 @@ jobs:
 
       - name: Commit newly-generated tiles
         run: >
-          git config --local user.email "typebrook@gmail.com";
-          git config --local user.name "typebrook";
+          git config --local user.email "actions-user@github.com"
+          git config --local user.name "GitHub CI"
           git branch gh-pages
           && git checkout gh-pages
           && { git add . --verbose | grep -v tiles/ || true; }
